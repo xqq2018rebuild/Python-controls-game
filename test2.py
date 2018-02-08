@@ -1,24 +1,4 @@
 # -*- coding:utf-8 -*-
-"""
-    作者：shenx
-    邮箱：lz_shenx@163.com
-    平台 widows10 python3.6
-        需要软件：雷电模拟器
-        python需安装的库 opencv , numpy
-        使用方法：tmp目录和本脚本文件放到雷电模拟器的安装目录，运行即可
-        魂十：打开魂十画面
-        副本：打开地图即可
-
-
-    其中引用的截图和图像部分引用网络上的代码
-    截图 ：https://www.cnblogs.com/weidiao/p/8051280.html
-    图像部分：https://github.com/netease/aircv
-    若有冒犯请通知我，立即删除
-
-
-
-
-"""
 import time
 import win32gui, win32ui, win32con, win32api
 import os
