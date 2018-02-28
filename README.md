@@ -1,4 +1,10 @@
-
+## 目录树
+	雷电模拟器安装目录
+		dm.py
+		dmtmp
+			jiejie
+		mian.py
+		tmp
 
 
 ## dm* 文件为使用大漠插件的截屏函数写的脚本
