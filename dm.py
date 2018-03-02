@@ -21,7 +21,8 @@ fontend="\033[0m"
 
 
 dm = win32com.client.Dispatch('dm.dmsoft')
-dm = win32com.client.Dispatch('dm.dmsoft')
+hwnd = dm.FindWindow("LDPlayerMainFrame", "雷电模拟器")
+b = dm.BindWindow(hwnd,"dx2","normal","normal",0)
 
 # 雷电坐标230,69 图片坐标：219,102
 def tap(x,y):
@@ -47,9 +48,10 @@ def swipe(x1, y1, x2, y2,ms=200):
     if DEBUG:
         print("从%s,%s滑动到%s,%s"%(x1, y1, x2, y2))
 def Capture():
-    hwnd = dm.FindWindow("LDPlayerMainFrame", "雷电模拟器")
+
     a, x1, y1, x2, y2 = dm.GetClientRect(hwnd)
 
+    # print( x1, y1, x2, y2)
     # 笔记本屏幕缩放125% 所以坐标乘以1.25
     # x1, y1, x2, y2 = int(x1 * 1.25), int(y1 * 1.25), int(x2 * 1.25), int(y2 * 1.25)
 
@@ -255,11 +257,12 @@ def find_pic(search,n=0,ranx=50,rany=15):
     return 0
 
 
-def fuben():
+def fuben(zhang):
 
     nowstatus = 0
     nextstatus = 1
     swiplock = 1
+    swiptimes=0
     boss = 0
 
     #换狗粮标志位
@@ -273,40 +276,46 @@ def fuben():
         if nowstatus == 0:
             see_to_tap2("dmtmp/baoxiang.bmp", n=0, ranx=1, rany=1)
             see_to_tap2("dmtmp/shengli.bmp", n=0, ranx=50, rany=50)
-            if see_to_doubletap("dmtmp/zhang.bmp", n=0, ranx=50, rany=50):
+            if see_to_doubletap(zhang, n=0, ranx=20, rany=30):
                 nowstatus = nextstatus
                 nextstatus = 2
             see_to_tap2("dmtmp/zhiren.bmp", n=0, ranx=10, rany=10)
             # see_to_tap2("dmtmp/tansuodenglou.bmp", n=0, ranx=2, rany=3)
 
-            # see_to_tap2("dmtmp/jieshou.png", n=0, ranx=10, rany=10)
-
-
-
+            see_to_tap2("dmtmp/jieshou.bmp", n=0, ranx=2, rany=4)
             see_to_tap2("dmtmp/waikuang.bmp", n=0, ranx=20, rany=10)
 
         elif nowstatus == 1:
-            # see_to_tap2("dmtmp/jieshou.png", n=0, ranx=10, rany=10)
+
             if see_to_tap2("dmtmp/tansuo.bmp", n=0, ranx=2, rany=5):
                 nowstatus = nextstatus
                 nextstatus = 0
                 swiplock = 0
+                swiptimes = 0
+            see_to_tap2("dmtmp/jieshou.bmp", n=0, ranx=2, rany=4)
         elif nowstatus == 2:
             if see_to_tap2("dmtmp/boss.bmp", n=0, ranx=2, rany=3):
                 swiplock = 1
                 boss = 1
+                swiptimes = 0
             fguai= see_to_tap2("dmtmp/guai.bmp", n=0, ranx=1, rany=1)
             if fguai:
                 swiplock =1
 
-            elif fguai == 0 and swiplock == 0:
-                swipe(1055+x, 468-y, 690+y, 434+x)
-                time.sleep(0.5)
-
+            elif fguai == 0 and swiplock == 0 :
+                if swiptimes<=15:
+                    swipe(1055+x, 468-y, 690+y, 434+x)
+                    time.sleep(0.5)
+                elif 15<swiptimes and swiptimes<=30:
+                    swipe(690 + y, 434 + x,1055 + x, 468 - y)
+                    time.sleep(0.5)
+                elif swiptimes>30:
+                    swiptimes=0
+                swiptimes += 1
             else:
                 swiplock = 1
 
-            # see_to_tap2("dmtmp/jieshou.png", n=0, ranx=10, rany=10)
+            see_to_tap2("dmtmp/jieshou.bmp", n=0, ranx=2, rany=4)
             if find_pic("dmtmp/zhunbei.bmp", n=0, ranx=50, rany=40):
                 if manji ==0 :
                     see_to_tap2("dmtmp/zhunbei.bmp", n=0, ranx=50, rany=40)
@@ -356,7 +365,7 @@ def hunshi():
             print("第" + redfont, times//2, fontend + "挑战")
         see_to_tap2("dmtmp/shengli1.bmp", n=0, ranx=70, rany=50)
         see_to_tap2("dmtmp/shengli.bmp", n=0, ranx=50, rany=40)
-
+        see_to_tap2("dmtmp/jieshou.bmp", n=0, ranx=2, rany=4)
 def jiejie():
     times=0
     nowstatus=0
@@ -408,7 +417,8 @@ def jiejie():
                 nextstatus=1
 
 def main():
-    jiejie()
+    fuben("dmtmp/ershierzhang.bmp")
+    # hunshi()
 if __name__ == '__main__':
     main()
 # def test():
