@@ -90,8 +90,8 @@ def write_data(dict_data):
 
 def main():
 
-    print("first input you root password :")
-    rootpwd=input()
+    #print("first input you root password :")
+    #rootpwd=input()
     dict_data = read_data()
     passwd.rootid=dict_data[id]
     while True:
@@ -101,7 +101,7 @@ def main():
             pwd1,switch1,data1=input("输入修改的属性，和内容:").split(" ")
             dict_data[pwd1].change(switch1,data1)
         elif choice == "2":
-            pwd_name,url2,remarks2,password2,way2,level2=input("输入密码名字,网站,备注,密码,加密方式,安全等级:\n").split(" ")
+            pwd_name,url2,remarks2,password2,way2,level2=input("输入密码名字 网站 备注 密码 加密方式 安全等级:\n").split(" ")
             dict_data[pwd_name]=passwd(pwd_name,url2,remarks2,password2,way2,level2)
         elif choice=="3":
             chaxun_pwd_name=input("输入要查询的名字:")
@@ -120,8 +120,21 @@ def main():
         else:
             for x in dict_data.keys():
                 print(x,' ',end='')
+def init():
+    #初次运行把passwd.rootid=dict_data[id] 注释掉
+    dict_data={}
+    write_data({"pwd":passwd("pwdddddddd1","www.baidu.com","百度网站密码","1234","lol",7),
+"pwd2":passwd("pd2", "www.bagcom", "55网站密码", "1sg34", "ladfl", 7),
+"pwd3":passwd("pwd31", "www.badadu.com", "sd网站密码", "12asf34", "laal", 7)})
+    
+    pwd_name,url2,remarks2,password2,way2,level2=input("输入密码名字 网站 备注 密码 加密方式 安全等级:\n").split(" ")
+    dict_data[pwd_name]=passwd(pwd_name,url2,remarks2,password2,way2,level2)
+    dict_data[id]=passwd.rootid
+    write_data(dict_data)
 if __name__ == '__main__':
     main()
+    #init()
+
     # data = read_data()
     # # switch = "name"
     # # data = "pwd3"
