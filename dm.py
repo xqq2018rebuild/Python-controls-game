@@ -22,7 +22,7 @@ fontend="\033[0m"
 
 dm = win32com.client.Dispatch('dm.dmsoft')
 hwnd = dm.FindWindow("LDPlayerMainFrame", "雷电模拟器")
-b = dm.BindWindow(hwnd,"dx2","normal","normal",0)
+# b = dm.BindWindow(hwnd,"dx2","normal","normal",0)
 
 # 雷电坐标230,69 图片坐标：219,102
 def tap(x,y):
@@ -32,7 +32,7 @@ def tap(x,y):
     :param y:
     :return:
     """
-    os.system("ld input tap %.1f %.1f"%(x,y))
+    os.system("ld input tap %.1f %.1f "%(x,y))
     if DEBUG:
         print("点击：",x,y)
 def swipe(x1, y1, x2, y2,ms=200):
@@ -44,7 +44,7 @@ def swipe(x1, y1, x2, y2,ms=200):
     :param y2: 结束点y轴
     :return:
     """
-    os.system("ld input swipe %.1f %.1f %.1f %.1f %s" % (x1, y1, x2, y2,ms))
+    os.system("ld input swipe %.1f %.1f %.1f %.1f %s " % (x1, y1, x2, y2,ms))
     if DEBUG:
         print("从%s,%s滑动到%s,%s"%(x1, y1, x2, y2))
 def Capture():
@@ -138,7 +138,7 @@ def find_all_template(im_source, im_search, threshold=0.95, maxcnt=0, rgb=False,
     return result
 
 
-def see_to_tap2(search,n=0,ranx=50,rany=15):
+def see_to_tap2(im_search,n=0,ranx=50,rany=15):
     """
         找到什么点什么
         :param im_source: 已经使用cv2.imread(filename) 打开过的图片
@@ -147,13 +147,13 @@ def see_to_tap2(search,n=0,ranx=50,rany=15):
         :return:
         """
     im_source = imread("dmtmp/tmp.bmp")
-    im_search = imread(search)
+    # im_search = imread(search)
     randx = random.randint(1, ranx)
     randy = random.randint(1, rany)
     L = find_all_template(im_source, im_search)
     if len(L) >= 1:
         tap(L[n]["result"][0] + randx, L[n]["result"][1] + randy - 35)
-        print("find %s"%(search))
+        # print("find ",im_search)
         return 1
 
     # for mubiao in L:
@@ -163,32 +163,32 @@ def see_to_tap2(search,n=0,ranx=50,rany=15):
     # show(imsrc)
     return 0
 
-def see_to_swipe(search,n=0,ranx=50,rany=15):
+def see_to_swipe(im_search,n=0,ranx=50,rany=15):
 
     im_source = imread("dmtmp/tmp.bmp")
-    im_search = imread(search)
+    # im_search = imread(search)
     randx = random.randint(1, ranx)
     randy = random.randint(1, rany)
     L = find_all_template(im_source, im_search)
     if len(L) >= 1:
         swipe(L[n]["result"][0] + randx, L[n]["result"][1] + randy - 35,L[n]["result"][0] + randx+20,L[n]["result"][1] + randy - 35+30,1000)
-        print("find %s" % (search))
+        # print("find ", im_search)
         return 1
     return 0
 
-def see_to_longtap(search,n=0,ranx=50,rany=15):
+def see_to_longtap(im_search,n=0,ranx=50,rany=15):
 
     im_source = imread("dmtmp/tmp.bmp")
-    im_search = imread(search)
+    # im_search = imread(search)
     randx = random.randint(1, ranx)
     randy = random.randint(1, rany)
     L = find_all_template(im_source, im_search)
     if len(L) >= 1:
         swipe(L[n]["result"][0] + randx, L[n]["result"][1] + randy - 35,L[n]["result"][0] + randx, L[n]["result"][1] + randy - 35,1500)
-        print("find %s" % (search))
+        # print("find ", im_search)
         return 1
     return 0
-def see_to_doubletap(search,n=0,ranx=50,rany=15):
+def see_to_doubletap(im_search,n=0,ranx=50,rany=15):
     """
         找到什么点什么
         :param im_source: 已经使用cv2.imread(filename) 打开过的图片
@@ -197,16 +197,16 @@ def see_to_doubletap(search,n=0,ranx=50,rany=15):
         :return:
         """
     im_source = imread("dmtmp/tmp.bmp")
-    im_search = imread(search)
+    # im_search = imread(search)
     randx = random.randint(1, ranx)
     randy = random.randint(1, rany)
     L = find_all_template(im_source, im_search)
     if len(L) >= 1:
 
         tap(L[n]["result"][0] + randx, L[n]["result"][1] + randy - 35)
-        time.sleep(0.5)
+        time.sleep(0.8)
         tap(L[n]["result"][0] + randx, L[n]["result"][1] + randy - 35)
-        print("find %s" % (search))
+        # print("find ", im_search)
         return 1
 
     # for mubiao in L:
@@ -217,7 +217,7 @@ def see_to_doubletap(search,n=0,ranx=50,rany=15):
     return 0
 
 
-def see_to_delaytap(search, n=0, ranx=50, rany=15):
+def see_to_delaytap(im_search, n=0, ranx=50, rany=15):
     """
         找到什么点什么
         :param im_source: 已经使用cv2.imread(filename) 打开过的图片
@@ -226,14 +226,14 @@ def see_to_delaytap(search, n=0, ranx=50, rany=15):
         :return:
         """
     im_source = imread("dmtmp/tmp.bmp")
-    im_search = imread(search)
+    # im_search = imread(search)
     randx = random.randint(1, ranx)
     randy = random.randint(1, rany)
     L = find_all_template(im_source, im_search)
     if len(L) >= 1:
         time.sleep(0.8)
         tap(L[n]["result"][0] + randx, L[n]["result"][1] + randy - 35)
-        print("find %s" % (search))
+        # print("find ", im_search)
         time.sleep(1.5)
         return 1
 
@@ -245,13 +245,13 @@ def see_to_delaytap(search, n=0, ranx=50, rany=15):
     return 0
 
 
-def find_pic(search,n=0,ranx=50,rany=15):
+def find_pic(im_search,n=0,ranx=50,rany=15):
 
     im_source = imread("dmtmp/tmp.bmp")
-    im_search = imread(search)
+    # im_search = imread(search)
     randx = random.randint(1, ranx)
     randy = random.randint(1, rany)
-    L = find_all_template(im_source, im_search)
+    L = find_all_template(im_source, im_search,threshold=0.98)
     if len(L) >= 1:
         return 1
     return 0
@@ -264,6 +264,25 @@ def fuben(zhang):
     swiplock = 1
     swiptimes=0
     boss = 0
+    ## 部分图片
+    im_zhang=imread(zhang)
+    im_baoxiang= imread("dmtmp/baoxiang.bmp")
+    im_shengli=imread("dmtmp/shengli.bmp")
+    im_zhiren=imread("dmtmp/zhiren.bmp")
+    im_jieshou=imread("dmtmp/jieshou.bmp")
+    im_waikuang=imread("dmtmp/waikuang.bmp")
+    im_tansuo=imread("dmtmp/tansuo.bmp")
+    im_boss=imread("dmtmp/boss.bmp")
+    im_guai=imread("dmtmp/guai.bmp")
+    im_zhunben=imread("dmtmp/zhunbei.bmp")
+    im_qingming=imread("dmtmp/qingming.bmp")
+    im_all=imread("dmtmp/all.bmp")
+    im_Nka=imread("dmtmp/Nka.bmp")
+    im_manji=imread("dmtmp/manji.bmp")
+    # im_manji2=imread("dmtmp/manji2.bmp")
+    # im_manji1=imread("dmtmp/manji1.bmp")
+    # im_manji3 = imread("dmtmp/manji3.bmp")
+    im_shengli1=imread("dmtmp/shengli1.bmp")
 
     #换狗粮标志位
     manji=0
@@ -274,31 +293,30 @@ def fuben(zhang):
         y = random.randint(1,100)
         Capture()
         if nowstatus == 0:
-            see_to_tap2("dmtmp/baoxiang.bmp", n=0, ranx=1, rany=1)
-            see_to_tap2("dmtmp/shengli.bmp", n=0, ranx=50, rany=50)
-            if see_to_doubletap(zhang, n=0, ranx=20, rany=30):
-                nowstatus = nextstatus
-                nextstatus = 2
-            see_to_tap2("dmtmp/zhiren.bmp", n=0, ranx=10, rany=10)
+            see_to_tap2(im_baoxiang, n=0, ranx=1, rany=1)
+            see_to_tap2(im_shengli, n=0, ranx=50, rany=50)
+            see_to_doubletap(im_zhang, n=0, ranx=20, rany=30)
+            see_to_tap2(im_zhiren, n=0, ranx=10, rany=10)
             # see_to_tap2("dmtmp/tansuodenglou.bmp", n=0, ranx=2, rany=3)
 
-            see_to_tap2("dmtmp/jieshou.bmp", n=0, ranx=2, rany=4)
-            see_to_tap2("dmtmp/waikuang.bmp", n=0, ranx=20, rany=10)
+            see_to_tap2(im_jieshou, n=0, ranx=2, rany=4)
+            see_to_tap2(im_waikuang, n=0, ranx=20, rany=10)
 
-        elif nowstatus == 1:
+        # elif nowstatus == 1:
 
-            if see_to_tap2("dmtmp/tansuo.bmp", n=0, ranx=2, rany=5):
-                nowstatus = nextstatus
+            if see_to_tap2(im_tansuo, n=0, ranx=2, rany=5):
+                nowstatus = 2
                 nextstatus = 0
                 swiplock = 0
                 swiptimes = 0
-            see_to_tap2("dmtmp/jieshou.bmp", n=0, ranx=2, rany=4)
+            see_to_tap2(im_jieshou, n=0, ranx=2, rany=4)
+            # see_to_doubletap(im_zhang, n=0, ranx=20, rany=30)
         elif nowstatus == 2:
-            if see_to_tap2("dmtmp/boss.bmp", n=0, ranx=2, rany=3):
+            if see_to_tap2(im_boss, n=0, ranx=2, rany=3):
                 swiplock = 1
                 boss = 1
                 swiptimes = 0
-            fguai= see_to_tap2("dmtmp/guai.bmp", n=0, ranx=1, rany=1)
+            fguai= see_to_tap2(im_guai, n=0, ranx=1, rany=1)
             if fguai:
                 swiplock =1
 
@@ -315,18 +333,20 @@ def fuben(zhang):
             else:
                 swiplock = 1
 
-            see_to_tap2("dmtmp/jieshou.bmp", n=0, ranx=2, rany=4)
-            if find_pic("dmtmp/zhunbei.bmp", n=0, ranx=50, rany=40):
+            see_to_tap2(im_jieshou, n=0, ranx=2, rany=4)
+            if find_pic(im_zhunben, n=0, ranx=50, rany=40):
                 if manji ==0 :
-                    see_to_tap2("dmtmp/zhunbei.bmp", n=0, ranx=50, rany=40)
+                    see_to_tap2(im_zhunben, n=0, ranx=50, rany=40)
                     tapf = 0
                     huan=0
                 elif manji ==1:
-                    if tapf == 0 and see_to_doubletap("dmtmp/qingming.bmp", n=0, ranx=3, rany=4):
+                    if tapf == 0 and see_to_doubletap(im_qingming, n=0, ranx=3, rany=4):
                         tapf=1
-                    if tapf==1 and see_to_tap2("dmtmp/all.bmp", n=0, ranx=4, rany=3):
+                    elif tapf ==1:
+                        see_to_doubletap(im_qingming, n=0, ranx=3, rany=4)
+                    if tapf==1 and  see_to_tap2(im_all, n=0, ranx=4, rany=3):
                         tapf=2
-                    if tapf ==2 and see_to_tap2("dmtmp/Nka.bmp", n=0, ranx=2, rany=4):
+                    if tapf ==2 and see_to_tap2(im_Nka, n=0, ranx=2, rany=4):
                         tapf=3
                     if huan ==0 and tapf==3:
                         swipe(598,580,173,322,1000)
@@ -334,17 +354,17 @@ def fuben(zhang):
                         swipe(733,583,626,234,500)
                         huan=1
                         manji=0
-            if find_pic("dmtmp/manji.bmp", n=0, ranx=1, rany=1):
+            if find_pic(im_manji, n=0, ranx=1, rany=1):
                 manji=1
                 print(redfont+"发现满级"+fontend)
-            if find_pic("dmtmp/manji2.bmp", n=0, ranx=1, rany=1):
-                manji=1
-                print(redfont+"发现满级"+fontend)
-            if find_pic("dmtmp/manji1.bmp", n=0, ranx=1, rany=1):
-                manji=1
-                print(redfont+"发现满级"+fontend)
-            see_to_tap2("dmtmp/shengli1.bmp", n=0, ranx=50, rany=50)
-            if see_to_delaytap("dmtmp/shengli.bmp", n=0, ranx=50, rany=50):
+            # if find_pic(im_manji2, n=0, ranx=1, rany=1):
+            #     manji=1
+            #     print(redfont+"发现满级"+fontend)
+            # if find_pic(im_manji1, n=0, ranx=1, rany=1):
+            #     manji=1
+            #     print(redfont+"发现满级"+fontend)
+            see_to_tap2(im_shengli1, n=0, ranx=50, rany=50)
+            if see_to_delaytap(im_shengli, n=0, ranx=50, rany=50):
 
                 if boss:
                     nowstatus = nextstatus
@@ -358,14 +378,21 @@ def fuben(zhang):
 
 def hunshi():
     times=0
+    im_tiaozhan=imread("dmtmp/tiaozhan.bmp")
+    im_shengli=imread("dmtmp/shengli.bmp")
+    im_shengli1 = imread("dmtmp/shengli1.bmp")
+    im_jieshou=imread("dmtmp/jieshou.bmp")
     while 1:
         Capture()
-        if see_to_tap2("dmtmp/tiaozhan.bmp", n=0, ranx=5, rany=10):
+        if see_to_tap2(im_tiaozhan, n=0, ranx=5, rany=10):
             times += 1
-            print("第" + redfont, times//2, fontend + "挑战")
-        see_to_tap2("dmtmp/shengli1.bmp", n=0, ranx=70, rany=50)
-        see_to_tap2("dmtmp/shengli.bmp", n=0, ranx=50, rany=40)
-        see_to_tap2("dmtmp/jieshou.bmp", n=0, ranx=2, rany=4)
+            print("第" + redfont, times, fontend + "挑战")
+        see_to_tap2(im_shengli1, n=0, ranx=70, rany=50)
+        see_to_tap2(im_shengli, n=0, ranx=50, rany=40)
+        see_to_tap2(im_jieshou, n=0, ranx=2, rany=4)
+        # if times>=60:
+        #     break
+        time.sleep(3)
 def jiejie():
     times=0
     nowstatus=0
@@ -379,6 +406,7 @@ def jiejie():
                 if see_to_tap2("dmtmp/jiejie/queding.bmp", n=0, ranx=4, rany=10):
                     times=0
                 see_to_tap2("dmtmp/jiejie/shuaxin.bmp", n=0, ranx=4, rany=10)
+                see_to_delaytap("dmtmp/shengli.bmp", n=0, ranx=10, rany=20)
 
 
             if see_to_tap2("dmtmp/jiejie/xunzhangling.bmp",n=0,ranx=4,rany=10):
@@ -402,6 +430,7 @@ def jiejie():
 
 
         if nowstatus ==1 :
+            see_to_delaytap("dmtmp/shengli.bmp", n=0, ranx=10, rany=20)
             if see_to_tap2("dmtmp/jiejie/jingong.bmp", n=0, ranx=4, rany=10):
                 nowstatus=nextstatus
                 nextstatus=0
@@ -411,14 +440,15 @@ def jiejie():
             if see_to_delaytap("dmtmp/jiejie/shibai.bmp", n=0, ranx=10, rany=20):
                 nowstatus = nextstatus
                 nextstatus = 1
-            if see_to_delaytap("dmtmp/shengli.bmp",n=0,ranx=10,rany=20):
+            if see_to_delaytap(print("find ",im_search),n=0,ranx=10,rany=20):
                 times += 1
                 nowstatus=nextstatus
                 nextstatus=1
 
 def main():
-    fuben("dmtmp/ershierzhang.bmp")
+    fuben("dmtmp/zhang.bmp")
     # hunshi()
+    # jiejie()
 if __name__ == '__main__':
     main()
 # def test():
