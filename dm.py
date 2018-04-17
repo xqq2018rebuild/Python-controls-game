@@ -14,10 +14,16 @@ from matplotlib import pyplot as plt
 import os
 import time
 import random
+import time
+
 
 DEBUG = False
+bulefont='\033[34;1m'
+fontend='\033[0m'
+
+
 redfont="\033[1;31m"
-fontend="\033[0m"
+
 
 
 dm = win32com.client.Dispatch('dm.dmsoft')
@@ -25,6 +31,21 @@ hwnd = dm.FindWindow("LDPlayerMainFrame", "雷电模拟器")
 # b = dm.BindWindow(hwnd,"dx2","normal","normal",0)
 
 # 雷电坐标230,69 图片坐标：219,102
+
+def log(text,show=0):
+    def decorator(func):
+        def wrapper(*args, **kw):
+            if show:
+                for x in args:
+                    for j in kw :
+                        print('%s[%s]%s[%s] %s(%s,%s)' % (bulefont,text,fontend,time.asctime( time.localtime(time.time()) ), func.__name__,x,j))
+            elif show==0:
+                print('%s[%s]%s[%s] %s' % (bulefont, text, fontend, time.asctime(time.localtime(time.time())), func.__name__))
+            return func(*args, **kw)
+        return wrapper
+    return decorator
+
+@log("正在点击....",1)
 def tap(x,y):
     """
     雷电模拟器点击屏幕
@@ -35,6 +56,7 @@ def tap(x,y):
     os.system("ld input tap %.1f %.1f "%(x,y))
     if DEBUG:
         print("点击：",x,y)
+@log("正在滑动....",1)
 def swipe(x1, y1, x2, y2,ms=200):
     """
     雷电模拟器滑动屏幕
@@ -47,6 +69,7 @@ def swipe(x1, y1, x2, y2,ms=200):
     os.system("ld input swipe %.1f %.1f %.1f %.1f %s " % (x1, y1, x2, y2,ms))
     if DEBUG:
         print("从%s,%s滑动到%s,%s"%(x1, y1, x2, y2))
+# @log("正在截图")
 def Capture():
 
     a, x1, y1, x2, y2 = dm.GetClientRect(hwnd)
@@ -57,6 +80,7 @@ def Capture():
 
     dm.Capture(x1, y1, x2, y2, "dmtmp/tmp.bmp")
 
+@log("读取截图文件..",1)
 def imread(filename):
     '''
     Like cv2.imread
@@ -71,7 +95,7 @@ def show(img):
     cv2.imshow('image', img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-
+# @log("正在寻找相似区域")
 def find_all_template(im_source, im_search, threshold=0.95, maxcnt=0, rgb=False, bgremove=False):
     '''
     Locate image position with cv2.templateFind
@@ -137,7 +161,7 @@ def find_all_template(im_source, im_search, threshold=0.95, maxcnt=0, rgb=False,
         cv2.floodFill(res, None, max_loc, (-1000,), max_val - threshold + 0.1, 1, flags=cv2.FLOODFILL_FIXED_RANGE)
     return result
 
-
+# @log("尝试点击....")
 def see_to_tap2(im_search,n=0,ranx=50,rany=15):
     """
         找到什么点什么
@@ -162,7 +186,7 @@ def see_to_tap2(im_search,n=0,ranx=50,rany=15):
     #     im_source = cv2.rectangle(im_source,left_p,right_p,(0,255,0),3)
     # show(imsrc)
     return 0
-
+@log("尝试滑动....")
 def see_to_swipe(im_search,n=0,ranx=50,rany=15):
 
     im_source = imread("dmtmp/tmp.bmp")
@@ -175,7 +199,7 @@ def see_to_swipe(im_search,n=0,ranx=50,rany=15):
         # print("find ", im_search)
         return 1
     return 0
-
+@log("尝试长按....")
 def see_to_longtap(im_search,n=0,ranx=50,rany=15):
 
     im_source = imread("dmtmp/tmp.bmp")
@@ -188,6 +212,7 @@ def see_to_longtap(im_search,n=0,ranx=50,rany=15):
         # print("find ", im_search)
         return 1
     return 0
+# @log("尝试双击....")
 def see_to_doubletap(im_search,n=0,ranx=50,rany=15):
     """
         找到什么点什么
@@ -216,7 +241,7 @@ def see_to_doubletap(im_search,n=0,ranx=50,rany=15):
     # show(imsrc)
     return 0
 
-
+@log("延时点击....")
 def see_to_delaytap(im_search, n=0, ranx=50, rany=15):
     """
         找到什么点什么
@@ -244,7 +269,7 @@ def see_to_delaytap(im_search, n=0, ranx=50, rany=15):
     # show(imsrc)
     return 0
 
-
+@log("寻找图片....")
 def find_pic(im_search,n=0,ranx=50,rany=15):
 
     im_source = imread("dmtmp/tmp.bmp")
@@ -256,7 +281,7 @@ def find_pic(im_search,n=0,ranx=50,rany=15):
         return 1
     return 0
 
-
+@log("开始副本....",1)
 def fuben(zhang):
 
     nowstatus = 0
@@ -375,7 +400,7 @@ def fuben(zhang):
                 swiplock = 0
 
 
-
+@log("开始魂十....")
 def hunshi():
     times=0
     im_tiaozhan=imread("dmtmp/tiaozhan.bmp")
@@ -386,13 +411,15 @@ def hunshi():
         Capture()
         if see_to_tap2(im_tiaozhan, n=0, ranx=5, rany=10):
             times += 1
-            print("第" + redfont, times, fontend + "挑战")
+
+            print("%s[第%s%s%s%s次挑战...]%s[%s] %s"%(bulefont,redfont, times, fontend,bulefont,fontend,time.asctime(time.localtime(time.time())),"刷魂十中"))
         see_to_tap2(im_shengli1, n=0, ranx=70, rany=50)
         see_to_tap2(im_shengli, n=0, ranx=50, rany=40)
         see_to_tap2(im_jieshou, n=0, ranx=2, rany=4)
         # if times>=60:
         #     break
         time.sleep(3)
+@log("开始结界....")
 def jiejie():
     times=0
     nowstatus=0
@@ -446,8 +473,8 @@ def jiejie():
                 nextstatus=1
 
 def main():
-    fuben("dmtmp/zhang.bmp")
-    # hunshi()
+    # fuben("dmtmp/zhang.bmp")
+    hunshi()
     # jiejie()
 if __name__ == '__main__':
     main()
