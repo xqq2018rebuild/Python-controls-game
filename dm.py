@@ -20,8 +20,6 @@ import time
 DEBUG = False
 bulefont='\033[34;1m'
 fontend='\033[0m'
-
-
 redfont="\033[1;31m"
 
 
@@ -45,7 +43,7 @@ def log(text,show=0):
         return wrapper
     return decorator
 
-@log("正在点击....",1)
+@log("正在点击....",show=1)
 def tap(x,y):
     """
     雷电模拟器点击屏幕
@@ -56,7 +54,7 @@ def tap(x,y):
     os.system("ld input tap %.1f %.1f "%(x,y))
     if DEBUG:
         print("点击：",x,y)
-@log("正在滑动....",1)
+@log("正在滑动....",show=1)
 def swipe(x1, y1, x2, y2,ms=200):
     """
     雷电模拟器滑动屏幕
@@ -80,7 +78,7 @@ def Capture():
 
     dm.Capture(x1, y1, x2, y2, "dmtmp/tmp.bmp")
 
-@log("读取截图文件..",1)
+@log("读取截图文件..",show=1)
 def imread(filename):
     '''
     Like cv2.imread
@@ -186,6 +184,35 @@ def see_to_tap2(im_search,n=0,ranx=50,rany=15):
     #     im_source = cv2.rectangle(im_source,left_p,right_p,(0,255,0),3)
     # show(imsrc)
     return 0
+# @log("尝试点击....")
+def see_to_tap(im_search,n=0,ranx=50,rany=15):
+    """
+        找到什么点什么
+        :param im_source: 已经使用cv2.imread(filename) 打开过的图片
+        :param im_search: 已经打开的位图块
+        :param n:  点击在找到的列表中第几个
+        :return:
+        """
+    im_source = imread("dmtmp/tmp.bmp")
+    # im_search = imread(search)
+    randx = random.randint(1, ranx)
+    randy = random.randint(1, rany)
+    L = find_all_template(im_source, im_search)
+    if len(L) >= 1:
+        tap(L[n]["result"][0] + randx, L[n]["result"][1] + randy - 35)
+        # print("find ",im_search)
+        time.sleep(2)
+        if len(find_all_template(im_source, im_search))>=1:
+            return 1
+        else:
+            return 0
+
+    # for mubiao in L:
+    #     left_p = mubiao["rectangle"][1]
+    #     right_p = mubiao["rectangle"][2]
+    #     im_source = cv2.rectangle(im_source,left_p,right_p,(0,255,0),3)
+    # show(imsrc)
+
 @log("尝试滑动....")
 def see_to_swipe(im_search,n=0,ranx=50,rany=15):
 
@@ -199,7 +226,7 @@ def see_to_swipe(im_search,n=0,ranx=50,rany=15):
         # print("find ", im_search)
         return 1
     return 0
-@log("尝试长按....")
+# @log("尝试长按....")
 def see_to_longtap(im_search,n=0,ranx=50,rany=15):
 
     im_source = imread("dmtmp/tmp.bmp")
@@ -241,7 +268,7 @@ def see_to_doubletap(im_search,n=0,ranx=50,rany=15):
     # show(imsrc)
     return 0
 
-@log("延时点击....")
+# @log("延时点击....")
 def see_to_delaytap(im_search, n=0, ranx=50, rany=15):
     """
         找到什么点什么
@@ -269,7 +296,7 @@ def see_to_delaytap(im_search, n=0, ranx=50, rany=15):
     # show(imsrc)
     return 0
 
-@log("寻找图片....")
+# @log("寻找图片....")
 def find_pic(im_search,n=0,ranx=50,rany=15):
 
     im_source = imread("dmtmp/tmp.bmp")
@@ -281,7 +308,8 @@ def find_pic(im_search,n=0,ranx=50,rany=15):
         return 1
     return 0
 
-@log("开始副本....",1)
+
+@log("开始副本....",show=1)
 def fuben(zhang):
 
     nowstatus = 0
@@ -305,9 +333,11 @@ def fuben(zhang):
     im_Nka=imread("dmtmp/Nka.bmp")
     im_manji=imread("dmtmp/manji.bmp")
     # im_manji2=imread("dmtmp/manji2.bmp")
-    # im_manji1=imread("dmtmp/manji1.bmp")
+    im_manji1=imread("dmtmp/manji1.bmp")
     # im_manji3 = imread("dmtmp/manji3.bmp")
     im_shengli1=imread("dmtmp/shengli1.bmp")
+    # 鬼王
+    im_guiwang = imread("dmtmp/guiwang.bmp")
 
     #换狗粮标志位
     manji=0
@@ -318,6 +348,8 @@ def fuben(zhang):
         y = random.randint(1,100)
         Capture()
         if nowstatus == 0:
+
+
             see_to_tap2(im_baoxiang, n=0, ranx=1, rany=1)
             see_to_tap2(im_shengli, n=0, ranx=50, rany=50)
             see_to_doubletap(im_zhang, n=0, ranx=20, rany=30)
@@ -328,8 +360,9 @@ def fuben(zhang):
             see_to_tap2(im_waikuang, n=0, ranx=20, rany=10)
 
         # elif nowstatus == 1:
-
-            if see_to_tap2(im_tansuo, n=0, ranx=2, rany=5):
+            if see_to_tap(im_guiwang, n=0, ranx=2, rany=4):
+                guiwang()
+            elif see_to_tap2(im_tansuo, n=0, ranx=2, rany=5):
                 nowstatus = 2
                 nextstatus = 0
                 swiplock = 0
@@ -382,6 +415,9 @@ def fuben(zhang):
             if find_pic(im_manji, n=0, ranx=1, rany=1):
                 manji=1
                 print(redfont+"发现满级"+fontend)
+            if find_pic(im_manji1, n=0, ranx=1, rany=1):
+                manji=1
+                print(redfont+"发现满级"+fontend)
             # if find_pic(im_manji2, n=0, ranx=1, rany=1):
             #     manji=1
             #     print(redfont+"发现满级"+fontend)
@@ -407,15 +443,25 @@ def hunshi():
     im_shengli=imread("dmtmp/shengli.bmp")
     im_shengli1 = imread("dmtmp/shengli1.bmp")
     im_jieshou=imread("dmtmp/jieshou.bmp")
+    im_yuhun=imread("dmtmp/yuhun.bmp")
+    im_dashe=imread("dmtmp/dashe.bmp")
+    # 鬼王
+    im_guiwang = imread("dmtmp/guiwang.bmp")
     while 1:
         Capture()
-        if see_to_tap2(im_tiaozhan, n=0, ranx=5, rany=10):
+        if see_to_tap(im_guiwang, n=0, ranx=2, rany=4):
+            guiwang()
+
+        elif see_to_tap2(im_tiaozhan, n=0, ranx=5, rany=10):
             times += 1
 
             print("%s[第%s%s%s%s次挑战...]%s[%s] %s"%(bulefont,redfont, times, fontend,bulefont,fontend,time.asctime(time.localtime(time.time())),"刷魂十中"))
         see_to_tap2(im_shengli1, n=0, ranx=70, rany=50)
-        see_to_tap2(im_shengli, n=0, ranx=50, rany=40)
+        if see_to_tap2(im_shengli, n=0, ranx=50, rany=40):
+            time.sleep(3)
         see_to_tap2(im_jieshou, n=0, ranx=2, rany=4)
+        see_to_tap2(im_yuhun, n=0, ranx=2, rany=4)
+        see_to_tap2(im_dashe, n=0, ranx=2, rany=4)
         # if times>=60:
         #     break
         time.sleep(3)
@@ -472,9 +518,217 @@ def jiejie():
                 nowstatus=nextstatus
                 nextstatus=1
 
+@log("发现鬼王....")
+def guiwang(goto=3):
+    #  goto = 1-3 去打副本、御魂、觉醒
+
+    over = 1
+    # im_guiwang=imread("dmtmp/guiwang.bmp")
+    im_guiexit=imread("dmtmp/guiwang_exit.bmp")
+    im_guizhunben = imread("dmtmp/zhunbei.bmp")
+    im_guitiaozhan= imread("dmtmp/guiwang_tiaozhan.bmp")
+    im_guishengli = imread("dmtmp/guiwang_shengli.bmp")
+    im_guishibai= imread("dmtmp/guiwang_shibai.bmp")
+    im_jieshou = imread("dmtmp/jieshou.bmp")
+
+    im_guixue=imread("dmtmp/guiwang_xue.bmp")
+    im_guixue2 = imread("dmtmp/guiwang_xue2.bmp")
+    im_guiwang = imread("dmtmp/guiwang.bmp")
+    im_guitianzhan30=imread("dmtmp/guiwang_tiaozhan30.bmp")
+    #鬼王头像
+    im_guitou=imread("dmtmp/guiwang_tou.bmp")
+    while over:
+        x = random.randint(1, 100)
+        Capture()
+        see_to_tap(im_guiwang, n=0, ranx=2, rany=4)
+
+        if see_to_tap(im_guishengli, n=0, ranx=5, rany=10):
+            over=0
+
+        findtiaozhan= see_to_tap2(im_guitiaozhan, n=0, ranx=2, rany=5)
+        if findtiaozhan==1:
+            print("现在在打鬼王中")
+        elif findtiaozhan==0:
+            if see_to_doubletap(im_guixue, n=0, ranx=2, rany=3):
+                print("攻打满血鬼王")
+                time.sleep(5)
+                see_to_tap2(im_guitiaozhan, n=0, ranx=2, rany=5)
+            else:
+                see_to_tap2(im_guixue2, n=0, ranx=2, rany=3)
+                time.sleep(5)
+                see_to_tap2(im_guitiaozhan, n=0, ranx=2, rany=5)
+        see_to_tap2(im_guitianzhan30, n=0, ranx=2, rany=5)
+        see_to_tap2(im_guizhunben, n=0, ranx=2, rany=5)
+        if see_to_tap2(im_guishibai, n=0, ranx=2, rany=5):
+            time.sleep(5)
+        see_to_tap2(im_guitou, n=0, ranx=2, rany=3)
+        see_to_tap2(im_jieshou, n=0, ranx=2, rany=3)
+        time.sleep(1+x/100)
+
+
+    while 1:
+        y = random.randint(1, 100)
+        Capture()
+        see_to_tap(im_guishengli, n=0, ranx=5, rany=10)
+        findtiaozhan = see_to_tap2(im_guitiaozhan, n=0, ranx=2, rany=5)
+        if findtiaozhan==1:
+            print("现在在打鬼王中")
+            time.sleep(2)
+        elif findtiaozhan==0:
+            if see_to_doubletap(im_guixue, n=0, ranx=2, rany=3):
+                print("攻打满血鬼王")
+                time.sleep(5)
+                see_to_tap2(im_guitiaozhan, n=0, ranx=2, rany=5)
+            else:
+                see_to_tap2(im_guixue2, n=0, ranx=2, rany=3)
+                time.sleep(5)
+                see_to_tap2(im_guitiaozhan, n=0, ranx=2, rany=5)
+        see_to_tap2(im_guitianzhan30, n=0, ranx=2, rany=5)
+        see_to_tap2(im_guizhunben, n=0, ranx=2, rany=5)
+        if see_to_tap2(im_guishibai, n=0, ranx=2, rany=5):
+            time.sleep(5)
+
+        see_to_tap2(im_jieshou, n=0, ranx=2, rany=3)
+
+        if see_to_tap(im_guiexit, n=0, ranx=5, rany=10):
+            print("退出鬼王挑战")
+            if goto== 3:
+                juexing()
+            elif goto ==1:
+                fuben("dmtmp/zhang.bmp")
+            elif goto ==2 :
+                hunshi()
+        else :
+            if see_to_tap(im_guiexit, n=0, ranx=5, rany=10):
+                if goto == 3:
+                    juexing()
+                elif goto == 1:
+                    fuben("dmtmp/zhang.bmp")
+                elif goto == 2:
+                    hunshi()
+
+        time.sleep(1.5+y/100)
+@log("开始觉醒....")
+def juexing():
+    times = 0
+    which =2
+    #1-4 火麒麟、风、水、雷
+    im_tiaozhan = imread("dmtmp/tiaozhan.bmp")
+    im_shengli = imread("dmtmp/shengli.bmp")
+    im_shengli1 = imread("dmtmp/shengli1.bmp")
+    #协作任务
+    im_jieshou = imread("dmtmp/jieshou.bmp")
+
+    im_juexing = imread("dmtmp/juexing.bmp")
+    im_huoqilin = imread("dmtmp/huoqilin.bmp")
+    im_fengqilin = imread("dmtmp/fengqilin.bmp")
+    im_shuiqilin = imread("dmtmp/shuiqilin.bmp")
+    im_leiqilin = imread("dmtmp/leiqilin.bmp")
+
+    #鬼王
+    im_guiwang = imread("dmtmp/guiwang.bmp")
+
+
+    while 1:
+        x = random.randint(1, 100)
+        Capture()
+        if see_to_tap(im_guiwang, n=0, ranx=2, rany=4):
+            guiwang()
+        see_to_tap2(im_jieshou, n=0, ranx=2, rany=3)
+        see_to_tap(im_juexing,n=0,ranx=2,rany=5)
+
+        if which == 1:
+            see_to_tap(im_huoqilin,n=0,ranx=5,rany=10)
+        elif which == 2:
+            see_to_tap(im_fengqilin,n=0,ranx=5,rany=10)
+        elif which == 3 :
+            see_to_tap(im_shuiqilin,n=0,ranx=5,rany=10)
+        elif which == 4 :
+            see_to_tap(im_leiqilin,n=0,ranx=5,rany=10)
+        if see_to_tap(im_guiwang, n=0, ranx=2, rany=4):
+            guiwang()
+        elif see_to_tap(im_tiaozhan, n=0, ranx=5, rany=10):
+            times += 1
+
+            print("%s[第%s%s%s%s次挑战...]%s[%s] %s" % (
+            bulefont, redfont, times, fontend, bulefont, fontend, time.asctime(time.localtime(time.time())), "刷觉醒中"))
+        see_to_tap2(im_shengli1, n=0, ranx=70, rany=50)
+        see_to_tap2(im_shengli, n=0, ranx=50, rany=40)
+        see_to_tap2(im_jieshou, n=0, ranx=2, rany=4)
+
+
+        # if times>=60:
+        #     break
+        time.sleep(1+x/100)
+
+
+
+def find_pic2(im_search,n=0,ranx=50,rany=15):
+
+    im_source = imread("dmtmp/tmp.bmp")
+    # im_search = imread(search)
+    randx = random.randint(1, ranx)
+    randy = random.randint(1, rany)
+    L = find_all_template(im_source, im_search,threshold=0.98)
+    if len(L) >= 1:
+        return 1 ,[L[n]["result"][0]+randx,L[n]["result"][1]+randy]
+        # return 1,L
+    return 0,L
+@log("开始鬼王....")
+def guiwang2():
+
+    over = 1
+    im_guiwang=imread("dmtmp/guiwang.bmp")
+    #血条
+    im_guixue= imread("dmtmp/guiwang_xue2.bmp")
+
+    im_guiexit=imread("dmtmp/guiwang_exit.bmp")
+    im_guizhunben = imread("dmtmp/zhunbei.bmp")
+    im_guitiaozhan= imread("dmtmp/guiwang_tiaozhan.bmp")
+    im_guishengli = imread("dmtmp/guiwang_shengli.bmp")
+    im_guishibai= imread("dmtmp/guiwang_shibai.bmp")
+    im_jieshou = imread("dmtmp/jieshou.bmp")
+    #鬼王技能1
+    im_guiji=imread("dmtmp/guiwang_jineng1.bmp")
+    im_gui2=imread("dmtmp/guiwang_2.bmp")
+    while 1:
+        if  over:
+            rantime = random.randint(1, 100)
+            Capture()
+            see_to_tap(im_guixue, n=0, ranx=2, rany=3)
+            see_to_tap(im_guishengli, n=0, ranx=5, rany=10)
+                # over = 0
+            if see_to_tap2(im_guitiaozhan, n=0, ranx=2, rany=5):
+                print("现在在打鬼王中")
+            see_to_tap2(im_guizhunben, n=0, ranx=2, rany=5)
+            see_to_tap2(im_guishibai, n=0, ranx=2, rany=5)
+            # a,L=find_pic2(im_guiji,ranx=2,rany=3)
+            # if a==1 and len(L)>=1:
+            #     tap(L[0]-20,L[1]-20)
+            # see_to_tap2(im_jieshou, n=0, ranx=2, rany=3)
+            time.sleep(1+rantime/100)
+        elif over == 0:
+            Capture()
+            rantime = random.randint(1, 100)
+            if see_to_tap(im_guiwang, n=0, ranx=5, rany=10):
+                over =1
+            see_to_tap(im_guiexit, n=0, ranx=5, rany=10)
+            if see_to_doubletap(im_gui2, n=0, ranx=5, rany=10):
+                over = 1
+
+
+            time.sleep(1 + rantime / 100)
+
+
+
+
 def main():
     # fuben("dmtmp/zhang.bmp")
-    hunshi()
+    # hunshi()
+    guiwang()
+    juexing()
+    # guiwang2()
+
     # jiejie()
 if __name__ == '__main__':
     main()
